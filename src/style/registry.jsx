@@ -27,7 +27,6 @@ export const Registry = ({children})=> {
     <StyleSheetManager sheet={sheet.instance}>
       <GlobalStyle/>
         {children}
-      
     </StyleSheetManager>
     </>
   )

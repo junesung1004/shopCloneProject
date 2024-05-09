@@ -1,6 +1,6 @@
 import {initializeApp} from 'firebase/app'
 import {GoogleAuthProvider, getAuth, onAuthStateChanged, signInWithPopup, signOut} from 'firebase/auth'
-import {getDatabase} from 'firebase/database'
+import {getDatabase, ref as databaseRef, set, get, query, orderByChild, equalTo} from 'firebase/database'
 import { getDownloadURL, getStorage, ref as storageRef, uploadBytes} from 'firebase/storage';
 import { adminUser } from '@/service/admin';
 import {v4 as uuid} from 'uuid'
@@ -72,6 +72,7 @@ export function onUserState(callback) {
   })
 }
 
+//이미지 파이어베이스 스토리지에 등록
 export async function uploadImages(file){
   try{
     const id = uuid();
@@ -85,5 +86,97 @@ export async function uploadImages(file){
     console.error("err :", err)
   }
 }
+
+//이미지 링크와 함께 상품을 데이터베이스에 등록
+export async function addProducts(product, imgUrl) {
+  try {
+    const id = uuid();
+    console.log("id",id)
+    await set(databaseRef(database, `products/${id}`),{
+      ...product,
+      id,
+      image : imgUrl,
+      price : parseInt(product.price)
+    })
+    console.log("set",set)
+  } catch(err) {
+    console.error("err :", err)
+  }
+}
+
+//데이터베이스에 등록된 상품 리스트를 가져오기(html에 뿌려주는 코드)
+export async function getProducts(){
+ 
+  // const snapshot = await get(databaseRef(database, 'products'))
+  // if(snapshot.exists()){
+  //   return Object.values(snapshot.val())
+  // } else {
+  //   return []
+  // }
+
+  try {
+    const snapshot = await get(databaseRef(database, 'products'))
+    console.log("snapshot :", snapshot)
+    if(snapshot.exists()){
+      console.log(Object.values(snapshot.val()))
+      return Object.values(snapshot.val())
+    } else {
+      return []
+    }
+  } catch(err) {
+    console.error("err :", err)
+    return []
+  }
+
+}
+
+// 카테고리별로 아이템을 구분해서 출력 : 클라이언트 필터링 버전.
+// 데이터의 양이 작을때에는 상관없지만 데이터의 양이 많을 경우에는 클라이언트 필터링이 불리해지는 부분이 생김
+/*
+모든 데이터를 클라이언트로 전송하는 로직이기 때문에 클라이언트 자체의 메모리 처리에있어
+과부하의 문제가 생김
+데이터의 전송량 문제 : 데이터가 클 수록 네트워크 데이터 사용량이 증가
+
+해결 방법 : 서버측 필터링으로 대체
+-api서버 자체에서 필터링을 거친 후 결과값만 클라이언트로 전송되기 때문에 데이터의 속도나 사용량에 차이가 많이 생김
+데이터 양이 클수록 클라이언트 필터링보다는 서버 필터링을 추천
+*/
+// export async function getCategoryProduct(category) {
+//   try {
+//     return get(databaseRef(database, 'products')).then((snapshot)=>{
+//       if(snapshot.exists()){
+//         const allProduct = Object.values(snapshot.val())
+//         const filterProduct = allProduct.filter((product)=> product.category === category)
+//         return filterProduct
+//       } else {
+//         return []
+//       }
+//     })
+//   } catch(err) {
+//     console.error("err : ", err)
+//   }
+// }
+
+//서버 필터링 버전
+export async function getCategoryProduct(category) {
+  try {
+    const productRef = databaseRef(database, 'products')
+
+    //category를 기준으로 쿼리를 생성하고 필드에 주어진 값이 전송받은 catagory와 같은 값만 조회
+    const q = query(productRef, orderByChild('category'), equalTo(category))
+    console.log("q : ", q)
+    const snapshot = await get(q)
+    if(snapshot.exists()){
+      return Object.values(snapshot.val())
+    } else {
+      return []
+    }
+    //console.log("snapshot :", snapshot)
+  } catch(err) {
+    console.error("err :", err)
+    return []
+  }
+}
+
 
 export {database}

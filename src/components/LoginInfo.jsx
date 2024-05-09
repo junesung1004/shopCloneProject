@@ -8,7 +8,7 @@ export default function LoginInfo() {
   const login = async()=> {
     googleLogin().then(setUser)
   }
-  console.log(user)
+  //console.log(user)
 
   const logout = async()=> {
     googleLogount().then(setUser)

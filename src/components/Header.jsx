@@ -4,13 +4,16 @@ import Link from 'next/link'
 import React from 'react'
 import styled from 'styled-components'
 import LoginInfo from './LoginInfo'
+import MainMenu from './MainMenu'
 
 export default function Header() {
   return (
     <HeaderContainer>
     <h1 className='logo'>
       <Link href={'/'}>shop</Link>
+      
     </h1>
+    <MainMenu />
     <LoginInfo />
     </HeaderContainer>
   )

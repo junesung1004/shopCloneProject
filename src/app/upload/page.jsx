@@ -1,8 +1,8 @@
 
 "use client"
-import { uploadImages } from "@/api/api";
+import { addProducts, uploadImages } from "@/api/api";
 import { categoryContext } from "@/utils/categoryContext";
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import styled from "styled-components";
 
 export default function UploadPage() {
@@ -31,6 +31,10 @@ export default function UploadPage() {
   //이미지 미리보기
   const [file, setFile] = useState(null)
   const {categoryList} = useContext(categoryContext)
+  const [isLoading, setIsLoading] = useState(false)
+  const [success, setSuccess] = useState(null)
+  const [error, setError] = useState(null)
+  const fileRef = useRef()// 업로드하는 파일의 입력해져있는 값을 비울때는 REF를 사용한다.
 
   //작성 결과 미리보기
   const productInfoChange = (e) => {
@@ -68,14 +72,38 @@ export default function UploadPage() {
   //2. 스토리지에 저장된 이미지의 경로는 데이터베이스에 같이 경로만 저장
   //3. 나머지는 데이터베이스에 저장
   
+  //이미지 관련 api
   const uploadSubmit = async(e) => {
     e.preventDefault();
     try{
       // 1. 이미지는 스토리지에 저장(저장된 경로만 추출)
       const url = await uploadImages(file)
       // console.log("url:", url)
+      await addProducts(product, url)
+      setSuccess('업로드가 완료되었습니다.')
+
+      setTimeout(() => {
+        setSuccess(null)
+      }, 2000);
+
+      setFile(null)
+      setProduct({
+        title : '',
+        price : '',
+        option : '',
+        category : '',
+        colors : [],
+      })
+
+      if(fileRef.current) {
+        fileRef.current.value = ''
+      }
     } catch(err) {
       console.error("err :", err)
+      setError('업로드에 실패했습니다.')
+    } finally {
+      setIsLoading(false)
+      //finally : try와 catch와 관계없이 try와 catch가 실행되고 무조건적으로실행되는 블록
     }
   }
 
@@ -150,7 +178,12 @@ export default function UploadPage() {
         </ColorSelect>
 
         {/* 업로드 버튼 */}
-        <button className="resultBtn">업로드</button>
+        <button className="resultBtn"
+        disabled={isLoading}
+        >{isLoading ? '업로드중' : '제품 등록하기'}
+        </button>
+        {success && (<p>{success}</p>)}
+        {error && (<p>{error}</p>)}
       </form>
     </UploadContainer>
   )
@@ -168,7 +201,7 @@ const UploadContainer = styled.div`
     img {
       display: block;
       width: 100%;
-      height: 100%;
+      height: 386px;
     }
   }
   form {
