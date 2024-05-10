@@ -23,7 +23,7 @@ const provider = new GoogleAuthProvider() //google로그인 기능을 사용할�
 const database = getDatabase() // 초기화된 앱을 기반으로 firebase 데이터베이스 객체 생성
 const storage = getStorage();
 
-console.log(firebaseConfig)
+//console.log(firebaseConfig)
 
 
 //구글 자동 로그인 방지
@@ -164,7 +164,7 @@ export async function getCategoryProduct(category) {
 
     //category를 기준으로 쿼리를 생성하고 필드에 주어진 값이 전송받은 catagory와 같은 값만 조회
     const q = query(productRef, orderByChild('category'), equalTo(category))
-    console.log("q : ", q)
+    //console.log("q : ", q)
     const snapshot = await get(q)
     if(snapshot.exists()){
       return Object.values(snapshot.val())
@@ -178,5 +178,39 @@ export async function getCategoryProduct(category) {
   }
 }
 
+//디테일 페이지에서 전달받은 id를 이용해서 database에 있는 동일한 id의 제품과 매칭
+export async function getProductId(productId) {
+  try {
+    const productRef = databaseRef(database, `products/${productId}`)
+    const snapshot = await get(productRef)
+    if(snapshot.exists()) {
+      return snapshot.val()
+    } 
+  } catch(err) {
+    console.error("err :", err)
+  }
+}
+
+export async function getCart(userId) {
+  try {
+    const snapshot = await (get(databaseRef(database, `cart/${userId}`)))
+    if(snapshot.exists()) {
+      const item = snapshot.val()
+      return Object.values(item)
+    } else P
+    return []
+  } catch(err) {
+    console.error("err :", err)
+  }
+}
+
+export async function updateCart(userId, product) {
+  try {
+    const cartRef = databaseRef(database, `cart/${userId}/${product.id}`)
+    await set(cartRef, product)
+  } catch(err) {
+    console.error("err :", err)
+  }
+}
 
 export {database}

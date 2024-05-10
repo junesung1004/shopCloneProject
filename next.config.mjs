@@ -5,7 +5,8 @@ const nextConfig = {
   },
   compiler:{
     styledComponents : true
-  }
+  },
+  //reactStrictMode : false, //stricMode 해제 기본값 true
 };
 
 export default nextConfig;
