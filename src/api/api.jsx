@@ -1,6 +1,6 @@
 import {initializeApp} from 'firebase/app'
 import {GoogleAuthProvider, getAuth, onAuthStateChanged, signInWithPopup, signOut} from 'firebase/auth'
-import {getDatabase, ref as databaseRef, set, get, query, orderByChild, equalTo} from 'firebase/database'
+import {getDatabase, ref as databaseRef, set, get, query, orderByChild, equalTo, remove} from 'firebase/database'
 import { getDownloadURL, getStorage, ref as storageRef, uploadBytes} from 'firebase/storage';
 import { adminUser } from '@/service/admin';
 import {v4 as uuid} from 'uuid'
@@ -189,6 +189,8 @@ export async function getProductId(productId) {
   } catch(err) {
     console.error("err :", err)
   }
+  
+  
 }
 
 export async function getCart(userId) {
@@ -197,20 +199,60 @@ export async function getCart(userId) {
     if(snapshot.exists()) {
       const item = snapshot.val()
       return Object.values(item)
-    } else P
-    return []
+    } else {
+      return []
+    }
+  } catch(err) {
+    console.error("err :", err)
+  }
+  
+}
+
+export async function updateCart(userId, product) {
+
+  try {
+    const cartRef = databaseRef(database, `cart/${userId}/${product.id}`)
+    await set(cartRef, product)
+    console.log("product :", product)
   } catch(err) {
     console.error("err :", err)
   }
 }
 
-export async function updateCart(userId, product) {
+//장바구니 리스트 삭제
+export async function removeCart(userId, productId) {
+  
+  //console.log("userId :", userId)
+//console.log("productId :", productId)
+
+  return remove (databaseRef(database, `cart/${userId}/${productId}`))
+}
+
+export async function getSearchProducts(text) {
   try {
-    const cartRef = databaseRef(database, `cart/${userId}/${product.id}`)
-    await set(cartRef, product)
+    const dbRef = databaseRef(database, 'products')
+    const snapshot = await get(dbRef)
+    if(snapshot.exists()){
+      const data = snapshot.val()
+      const allProducts = Object.values(data)
+      //console.log("allProducts :", allProducts)
+
+      if(allProducts.length === 0) {
+        return []
+      }
+      const matchProducts = allProducts.filter((product)=> {
+        const itemItle = product.title
+        console.log("itemItle :", itemItle)
+        return itemItle.includes(text)
+      })
+      return matchProducts
+    } else {
+      return []
+    }
   } catch(err) {
     console.error("err :", err)
   }
 }
+
 
 export {database}

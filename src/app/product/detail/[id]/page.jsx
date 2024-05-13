@@ -64,27 +64,45 @@ export default function ProductDetailPage(){
     console.log(color)
     setSelectedColor(color)
   }
+  
 
   const handleActionClick = (type) => {
     if(!user) {
       alert('로그인이 필요합니다.')
       googleLogin()
+      return
     } 
 
-    const {image, title, price} = product;
-    const itemAddOption = {
-      id,
-      image,
-      title,
-      price,
-      option : selected,
-      color : selectColor,
-      quantity : 1, // 수량
+    console.log("selectedColor :", selectedColor)
+    console.log("selected :", selected)
+    if(!selectedColor || !selected) {
+      alert('옵션이 선택되지 않았습니다.')
+      return
     }
-    
+ 
+    if(type === '장바구니') {
+      const productToAdd = {
+        id: product.id,
+        title : product.title,
+        price : product.price,
+        image : product.image,
+        option : selected,
+        color : selectedColor,
+        quantity : 1
+      }
+      addItemCart.mutate(productToAdd, {
+        onSuccess : ()=> {
+          alert('장바구니에 추가 되었습니다.')
+        },
+        onError : (error)=> {
+          alert('장바구니 추가에 실패했습니다.')
+          console.error("error :", error)
+        }
+      })
+    }
   }
 
-  addItemCart(itemAddOption)
+
 
   
   if(isLoading) return <p>로딩중입니다.</p>
@@ -121,7 +139,7 @@ export default function ProductDetailPage(){
         </div>
 
         <div className="detailBtns">
-          <button className="cartBtn" onClick={()=>handleActionClick('장바구니 담기')}>장바구니 담기</button>
+          <button className="cartBtn" onClick={()=>handleActionClick('장바구니')}>장바구니 담기</button>
           <button className="buyBtn" onClick={()=>handleActionClick('구매하기')}>구매하기</button>
         </div>
       </div>
