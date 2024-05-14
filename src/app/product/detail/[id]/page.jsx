@@ -2,7 +2,7 @@
 "use client"
 
 import { getProductId, googleLogin } from "@/api/api"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import styled from "styled-components"
@@ -15,6 +15,8 @@ export default function ProductDetailPage(){
 
   const {user} = useAuthContext()
   console.log("user :", user)
+
+  const router = useRouter()
 
   const pathName = usePathname() // 현재 주소의 경로를 받아옴
   //console.log(pathName)
@@ -69,7 +71,7 @@ export default function ProductDetailPage(){
   const handleActionClick = (type) => {
     if(!user) {
       alert('로그인이 필요합니다.')
-      googleLogin()
+      router.push('/login')
       return
     } 
 
@@ -195,7 +197,7 @@ const DetailPage = styled.div`
         padding: 6px;
         background-color: transparent;
         option {
-          background-color : black
+          background-color : wheat
         }
       }
     }

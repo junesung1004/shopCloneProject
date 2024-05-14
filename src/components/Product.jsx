@@ -18,9 +18,9 @@ export default function Product({products}) {
 
 const ProductList = styled.ul`
   display:flex;
-  gap: 20px 5%;
+  gap: 20px 10%;
   flex-wrap:wrap;
-  justify-content: space-between;
+  justify-content: center;
   li {
     width : 30%;
     flex-shrink: 0

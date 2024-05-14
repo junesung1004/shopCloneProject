@@ -42,6 +42,11 @@ export default function LoginPage() {
       setError("로그인 인증 오류가 발생했습니다.")
     }
   }
+
+  const handleClickJoin = () => {
+    router.push('/join')
+  }
+
   return (
     <Container>
       <h2>로그인</h2>
@@ -58,8 +63,15 @@ export default function LoginPage() {
         onChange={(e)=>setPassword(e.target.value)}
         />
 
+        <Button>
         <button>로그인</button>
         <button type="button" onClick={googleLoginEvent}>구글 로그인</button>
+        
+        </Button>
+        
+        <div>
+        <button type="button" onClick={handleClickJoin}>회원가입</button>
+        </div>
 
         {error && <span className="errorText">{error}</span>}
       </form>
@@ -69,4 +81,9 @@ export default function LoginPage() {
 
 const Container = styled.div`
 
+`
+
+const Button = styled.div`
+  display:flex;
+  gap:30px;
 `

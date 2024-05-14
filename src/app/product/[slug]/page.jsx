@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import NoProduct from "./NoProduct";
+import CategorySlider from "@/components/CategorySlider";
 // import { useRouter } from "next/router";
 
 export default function CategoryPage() {
@@ -28,21 +29,21 @@ export default function CategoryPage() {
 },[slug])
 //console.log("products :", products)
 
-// useEffect(()=> {
-//   if(products.length > 0) {
-//     const randomImg = [...products].sort(()=>0.5 - Math.random())
-//     console.log("randomImg :", randomImg)
-//     //.sort(()=>0.5 - Math.random() 랜덤 정렬을 위한 로직
-//     //sort()=> 배열 정렬하기
-//     const selectImg = randomImg.slice(0,4).map((el)=>el.img)
-//     setRandomImages(selectImg)
-//   }
-// },[products])
+useEffect(()=> {
+  if(products.length > 0) {
+    const randomImg = [...products].sort(()=>0.5 - Math.random())
+    console.log("randomImg :", randomImg)
+    //.sort(()=>0.5 - Math.random() 랜덤 정렬을 위한 로직
+    //sort()=> 배열 정렬하기
+    const selectImg = randomImg.slice(0,4).map((el)=>el.image)
+    setRandomImages(selectImg)
+  }
+},[products])
 
 return (
   <Container>
   <h1>{slug}페이지</h1>
-  {/* <CategoryPage imgs={randomImages} /> */}
+  <CategorySlider imgs={randomImages} />
   {/* <CategoryProductList slug={slug} products={products}/> */}
   {products.length > 0 ? (
     <CategoryProductList slug={slug} products={products}/>

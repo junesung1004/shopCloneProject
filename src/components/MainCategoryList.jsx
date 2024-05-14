@@ -20,28 +20,31 @@ export default function MainCategoryList({category}) {
       console.error("err :", err)
     })
   },[category])
+
   return (
     <Container>
       <h2>{category}</h2>
+      <ul>
       {items.map((item, idx)=> (
         <li key={idx}>
           <ProductItem product={item} />
         </li>
       )
       )}
+      </ul>
     </Container>
   )
 }
 
 
 const Container= styled.div`
-
-  width: 100px;
+  width: 100%;
   max-width: 100vw;
   box-sizing: border-box;
   padding: 24px 12px;
   h2{
-    color: #fff;
+    color: #000;
+    font-weight:bold;
     font-size:20px;
     text-align:center;
     margin-bottom:12px;
@@ -50,10 +53,12 @@ const Container= styled.div`
     display:flex;
     justify-content:center;
     gap:20px;
+    border-bottom: 1px solid gray;
     li{
-      width: 10%;
-      max-width:170px;
+      width: 20%;
+      max-width:250px;
       flex-shrink:0;
+      margin-bottom:20px;
     }
   }
 `

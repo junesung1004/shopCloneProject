@@ -4,6 +4,7 @@ import { formatCurrency } from "@/utils/formatCurrency"
 import Image from "next/image"
 import { MdArrowDownward } from "react-icons/md";
 import { MdArrowUpward } from "react-icons/md";
+import styled from "styled-components";
 
 export default function CartItem({product, idx}){
 
@@ -32,6 +33,7 @@ export default function CartItem({product, idx}){
   return (
     <>
     <li>
+      <Container>
       <p>{idx}</p>
       <img src={product.image} alt={product.title}  />
       <p className="cartItemTitle">상품명 : {product.title}</p>
@@ -45,8 +47,19 @@ export default function CartItem({product, idx}){
         <button onClick={plusQuantity}><MdArrowUpward /></button>
         <button onClick={minusQuantity}><MdArrowDownward /></button>
       </div>
+      <div>
       <button className="removeBtn" onClick={()=>itemDelete(product.id)}>삭제</button>
-    </li>
+      </div>
+      
+    
+      </Container>
+      </li>
     </>
   )
 }
+
+const Container = styled.div`
+  display: flex;
+  gap: 20px;
+
+`
